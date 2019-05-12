@@ -1,7 +1,7 @@
 @Library('jenkins-techlab-libraries') _
 
 pipeline {
-    agent { label env.JOB_NAME.split('/')[0] }
+    agent { label 'jenkins-slave-2' }
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
         timeout(time: 10, unit: 'MINUTES')
@@ -21,7 +21,7 @@ pipeline {
         stage('Build') {
             steps {                 
                 milestone(10)  // The first milestone step starts tracking concurrent build order
-                withEnv(["JAVA_HOME=${tool 'jdk8_oracle'}", "PATH+MAVEN=${tool 'maven35'}/bin:${env.JAVA_HOME}/bin"]) {
+                withEnv(["JAVA_HOME=${tool 'jdk1.8'}", "PATH+MAVEN=${tool 'M3'}/bin:${env.JAVA_HOME}/bin"]) {
                     sh 'mvn -B -V -U -e clean verify -DskipTests'
                 }
             }
@@ -30,7 +30,7 @@ pipeline {
             steps {
                 // Only one build is allowed to use test resources, newest builds run first
                 lock(resource: 'myResource', inversePrecedence: true) {  // Lockable Resources Plugin
-                    withEnv(["JAVA_HOME=${tool 'jdk8_oracle'}", "PATH+MAVEN=${tool 'maven35'}/bin:${env.JAVA_HOME}/bin"]) {
+                    withEnv(["JAVA_HOME=${tool 'jdk1.8'}", "PATH+MAVEN=${tool 'M3'}/bin:${env.JAVA_HOME}/bin"]) {
                         sh 'mvn -B -V -U -e verify -Dsurefire.useFile=false'
                     }
                     milestone(20)  // Abort all older builds that didn't get here
@@ -47,7 +47,7 @@ pipeline {
             steps {
                 input "Deploy?"
                 milestone(30)  // Abort all older builds that didn't get here
-                withEnv(["JAVA_HOME=${tool 'jdk8_oracle'}", "PATH+MAVEN=${tool 'maven35'}/bin:${env.JAVA_HOME}/bin"]) {
+                withEnv(["JAVA_HOME=${tool 'jdk1.8'}", "PATH+MAVEN=${tool 'M3'}/bin:${env.JAVA_HOME}/bin"]) {
                     sh "mvn -s '${M2_SETTINGS}' -B deploy:deploy-file -DrepositoryId='puzzle-releases' -Durl='${REPO_URL}' -DgroupId='com.puzzleitc.jenkins-techlab' -DartifactId='${ARTIFACT}' -Dversion='1.0' -Dpackaging='jar' -Dfile=`echo target/*.jar`"
                 }
 
