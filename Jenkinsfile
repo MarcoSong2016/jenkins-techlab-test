@@ -58,9 +58,9 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-            notifyPuzzleChat()
-        }
-    }
+    // post {
+    //     always {
+    //         notifyPuzzleChat()
+    //     }
+    // }
 }
