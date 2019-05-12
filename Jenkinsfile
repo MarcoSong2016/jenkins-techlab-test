@@ -19,7 +19,7 @@ stage('Build') {
 // milestones are used to discard obsolete build, if a consecutive
 // build passes a milestone, it will discard all older builds that
 // have not yet passed the milestone
-milestone 1
+// milestone 1
 stage('QA') {
   // we only have one QA environment so to limit concurrency to
   // a single build we can use locks
@@ -30,7 +30,7 @@ stage('QA') {
   lock(resource: 'qaEnvironment', inversePrecedence: true) {
     // this milestone in combination with the inversed lock above
     // discards all queued superseded builds
-    milestone 2
+    // milestone 2
     // run integration and performance testing in parallel
     parallel("Integration Tests": {
       node {
@@ -52,10 +52,10 @@ stage('QA') {
   }
 }
 
-milestone 3
+// milestone 3
 stage('Staging') {
   lock(resource: 'stagingEnvironment', inversePrecedence: true) {
-    milestone 4
+    // milestone 4
     node {
       echo 'Deployment to staging environment...'
       // setup and deploy staging environment
@@ -67,7 +67,7 @@ stage('Staging') {
   }
 }
 
-milestone 5
+// milestone 5
 stage ('Production') {
   lock(resource: 'productionEnvironment', inversePrecedence: true) {
     node {
