@@ -1,8 +1,10 @@
+@Library('jenkins-techlab-libraries') _
+
 pipeline {
-    agent { label 'jenkins-slave-2' }
+    agent { label env.JOB_NAME.split('/')[0] }
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
-        timeout(time: 20, unit: 'MINUTES')
+        timeout(time: 10, unit: 'MINUTES')
         timestamps()  // Requires the "Timestamper Plugin"
     }
     triggers {
@@ -11,12 +13,22 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                withEnv(["JAVA_HOME=${tool 'jdk1.8'}", "PATH+MAVEN=${tool 'M3'}/bin:${env.JAVA_HOME}/bin"]) {
+                withEnv(["JAVA_HOME=${tool 'jdk8_oracle'}", "PATH+MAVEN=${tool 'maven35'}/bin:${env.JAVA_HOME}/bin"]) {
+                    checkout scm
                     sh 'mvn -B -V -U -e clean verify -Dsurefire.useFile=false'
                     archiveArtifacts 'target/*.?ar'
+                }
+            }
+            post {
+                always {
                     junit 'target/**/*.xml'  // Requires JUnit plugin
                 }
             }
+        }
+    }
+    post {
+        always {
+            notifyPuzzleChat('jenkins-techlab')
         }
     }
 }
