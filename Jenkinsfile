@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                withEnv(["JAVA_HOME=${tool 'jdk8'}", "PATH+MAVEN=${tool 'M3'}/bin:${env.JAVA_HOME}/bin"]) {
+                withEnv(["JAVA_HOME=${tool 'jdk1.8'}", "PATH+MAVEN=${tool 'M3'}/bin:${env.JAVA_HOME}/bin"]) {
                     sh 'mvn -B -V -U -e clean verify -Dsurefire.useFile=false'
                     archiveArtifacts 'target/*.?ar'
                     junit 'target/**/*.xml'  // Requires JUnit plugin
