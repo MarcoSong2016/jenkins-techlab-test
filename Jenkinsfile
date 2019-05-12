@@ -1,8 +1,8 @@
 pipeline {
-    agent { label jenkins-slave-2 }
+    agent { label 'jenkins-slave-2' }
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
-        timeout(time: 10, unit: 'MINUTES')
+        timeout(time: 20, unit: 'MINUTES')
         timestamps()  // Requires the "Timestamper Plugin"
     }
     triggers {
