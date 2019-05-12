@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                withEnv(["JAVA_HOME=${tool 'java-1.8.0-openjdk-1.8.0.212.b04-0.el7_6.x86_64'}", "PATH+MAVEN=${tool 'maven35'}/bin:${env.JAVA_HOME}/bin"]) {
+                withEnv(["JAVA_HOME=${tool 'jdk-1.8.0_64bits'}", "PATH+MAVEN=${tool 'maven35'}/bin:${env.JAVA_HOME}/bin"]) {
                     sh 'java -version'
 
                     sh 'mvn --version'
